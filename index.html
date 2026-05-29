@@ -35,7 +35,6 @@
       overflow-x: hidden;
     }
 
-    /* subtle scanline texture */
     body::before {
       content: '';
       position: fixed;
@@ -99,7 +98,7 @@
 
     .widget-wrapper {
       width: 95vw;
-      height: calc(95vh - 100px); /* account for header + footer */
+      height: calc(95vh - 100px);
       border: 1px solid var(--border);
       border-radius: 4px;
       overflow: hidden;
@@ -117,11 +116,70 @@
       z-index: 2;
     }
 
+    /* Loading overlay */
+    .loading-overlay {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      gap: 20px;
+      z-index: 3;
+      transition: opacity 0.8s ease;
+    }
+
+    .loading-overlay.hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .loading-label {
+      font-size: 0.85rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    .loading-label span.dots {
+      display: inline-block;
+      width: 1.8em;
+    }
+
+    /* Progress bar */
+    .progress-track {
+      width: 200px;
+      height: 2px;
+      background: var(--border);
+      border-radius: 2px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      width: 0%;
+      background: var(--accent);
+      border-radius: 2px;
+      transition: width 8.5s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 0 0 8px rgba(232, 255, 0, 0.6);
+    }
+
+    .progress-fill.go {
+      width: 100%;
+    }
+
+    /* iframe */
     .widget-wrapper iframe {
       width: 100%;
       height: 100%;
       border: none;
       display: block;
+      opacity: 0;
+      transition: opacity 0.8s ease;
+    }
+
+    .widget-wrapper iframe.visible {
+      opacity: 1;
     }
 
     footer {
@@ -156,13 +214,8 @@
       transition: width 0.25s ease;
     }
 
-    footer a:hover {
-      color: var(--accent);
-    }
-
-    footer a:hover::after {
-      width: 100%;
-    }
+    footer a:hover { color: var(--accent); }
+    footer a:hover::after { width: 100%; }
 
     .divider {
       color: var(--border);
@@ -179,6 +232,12 @@
 
   <main>
     <div class="widget-wrapper">
+      <div class="loading-overlay">
+        <div class="loading-label">loading<span class="dots"></span></div>
+        <div class="progress-track">
+          <div class="progress-fill" id="progressFill"></div>
+        </div>
+      </div>
       <iframe
         src="https://6klabs.com/widget/amuse/1c767c68b28574925d3a93424ded0776ec85758738e351e431265b0b0104aab1"
         allowfullscreen
@@ -192,6 +251,31 @@
     <span class="divider">◆</span>
     <a href="https://larper4.life" target="_blank" rel="noopener noreferrer">larper4.life</a>
   </footer>
+
+  <script>
+    // Dot cycling
+    const dots = document.querySelector('.dots');
+    const states = ['', '.', '..', '...'];
+    let i = 0;
+    const interval = setInterval(function () {
+      i = (i + 1) % states.length;
+      dots.textContent = states[i];
+    }, 500);
+
+    // Kick off progress bar (slight delay so transition fires)
+    requestAnimationFrame(function () {
+      requestAnimationFrame(function () {
+        document.getElementById('progressFill').classList.add('go');
+      });
+    });
+
+    // Reveal widget at 8s, progress bar completes at 8.5s
+    setTimeout(function () {
+      clearInterval(interval);
+      document.querySelector('.widget-wrapper iframe').classList.add('visible');
+      document.querySelector('.loading-overlay').classList.add('hidden');
+    }, 8500);
+  </script>
 
 </body>
 </html>
