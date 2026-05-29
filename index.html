@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>tm - now playing</title>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #0a0a0a;
+      --surface: #111;
+      --accent: #e8ff00;
+      --text: #f0f0f0;
+      --muted: #555;
+      --border: #222;
+    }
+
+    *, *::before, *::after {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html, body {
+      height: 100%;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Space Mono', monospace;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* subtle scanline texture */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background: repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 2px,
+        rgba(255,255,255,0.012) 2px,
+        rgba(255,255,255,0.012) 4px
+      );
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    header {
+      position: relative;
+      z-index: 10;
+      padding: 18px 28px 14px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .pulse-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--accent);
+      animation: pulse 1.6s ease-in-out infinite;
+      flex-shrink: 0;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.35; transform: scale(0.7); }
+    }
+
+    .title {
+      font-size: 0.75rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--text);
+      font-weight: 700;
+    }
+
+    .title span {
+      color: var(--accent);
+    }
+
+    main {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 16px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .widget-wrapper {
+      width: 95vw;
+      height: calc(95vh - 100px); /* account for header + footer */
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      overflow: hidden;
+      position: relative;
+      background: var(--surface);
+    }
+
+    .widget-wrapper::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: 4px;
+      box-shadow: 0 0 40px rgba(232, 255, 0, 0.06), inset 0 0 0 1px rgba(232,255,0,0.05);
+      pointer-events: none;
+      z-index: 2;
+    }
+
+    .widget-wrapper iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+      display: block;
+    }
+
+    footer {
+      position: relative;
+      z-index: 10;
+      padding: 14px 28px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 28px;
+      font-size: 0.65rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+    }
+
+    footer a {
+      color: var(--muted);
+      text-decoration: none;
+      transition: color 0.2s ease;
+      position: relative;
+    }
+
+    footer a::after {
+      content: '';
+      position: absolute;
+      bottom: -2px;
+      left: 0;
+      width: 0;
+      height: 1px;
+      background: var(--accent);
+      transition: width 0.25s ease;
+    }
+
+    footer a:hover {
+      color: var(--accent);
+    }
+
+    footer a:hover::after {
+      width: 100%;
+    }
+
+    .divider {
+      color: var(--border);
+      font-size: 0.5rem;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="pulse-dot"></div>
+    <div class="title">tm <span>//</span> now playing</div>
+  </header>
+
+  <main>
+    <div class="widget-wrapper">
+      <iframe
+        src="https://6klabs.com/widget/amuse/1c767c68b28574925d3a93424ded0776ec85758738e351e431265b0b0104aab1"
+        allowfullscreen
+        allow="autoplay; encrypted-media"
+      ></iframe>
+    </div>
+  </main>
+
+  <footer>
+    <a href="https://6klabs.com" target="_blank" rel="noopener noreferrer">6klabs</a>
+    <span class="divider">◆</span>
+    <a href="https://larper4.life" target="_blank" rel="noopener noreferrer">larper4.life</a>
+  </footer>
+
+</body>
+</html>
